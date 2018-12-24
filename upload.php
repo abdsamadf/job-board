@@ -53,10 +53,11 @@ if (isset($_POST['submit-form'])) {
 
         if (empty($errors) == true) {
             move_uploaded_file($file_tmp, $file_destination);
-
+            session_start();
+            $id = $_SESSION['id'];
             $file_size_new = formatSizeUnits($file_size);
             $sql = "INSERT INTO userFiles (user_id, file, file_name, file_size, file_type)
-            VALUES ('1', '$file_name_new', '$file_name', '$file_size_new', '$file_type')";
+            VALUES ('$id', '$file_name_new', '$file_name', '$file_size_new', '$file_type')";
 
             if (mysqli_query($conn, $sql)) {
                 echo "New record created successfully";
@@ -74,15 +75,3 @@ if (isset($_POST['submit-form'])) {
     }
 }
 ?>
-/*
-if (isset($_POST['submit-form'])) {
-    $file_size_new = formatSizeUnits($file_size);
-    $sql = "INSERT INTO userFiles (user_id, file, file_name, file_size, file_type)
-    VALUES ('1', '$file_name_new', '$file_name', '$file_size_new', '$file_type')";
-
-    if (mysqli_query($conn, $sql)) {
-        echo "New record created successfully";
-    } else {
-        echo "Error:" . $sql . "<br>" . mysqli_error($conn);
-    }
-} */
