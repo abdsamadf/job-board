@@ -3,12 +3,10 @@
 ?>
 
 <?php
-
+// $errors = array();
 function formatSizeUnits($bytes)
 {
-    if ($bytes >= 1073741824) {
-        $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-    } elseif ($bytes >= 1048576) {
+    if ($bytes >= 1048576) {
         $bytes = number_format($bytes / 1048576, 2) . ' MB';
     } elseif ($bytes >= 1024) {
         $bytes = number_format($bytes / 1024, 2) . ' KB';
@@ -36,19 +34,14 @@ if (isset($_POST['submit-form'])) {
         $file_name_new = uniqid() . '.' . $file_ext;
         $file_destination = 'uploads/' . $file_name_new;
 
-        $extensions = array("jpeg", "jpg", "png");
+        $extensions = array("pdf");
 
         if (in_array($file_ext, $extensions) === false) {
-            $errors[] = "extension not allowed, please choose a JPEG or PNG file.";
+            $errors[] = "extension not allowed, please choose a PDF file.";
         }
 
-        // Check if file already exists
-        if (file_exists($file_destination)) {
-            $errors[] =  "Sorry, file already exists";
-        }
-
-        if ($file_size > 2097152) {
-            $errors[] = 'File size must be exactly 2 MB';
+        if ($file_size > 52428800) {
+            $errors[] = 'File size must be exactly 50 MB';
         }
 
         if (empty($errors) == true) {
@@ -56,19 +49,30 @@ if (isset($_POST['submit-form'])) {
             session_start();
             $id = $_SESSION['id'];
             $file_size_new = formatSizeUnits($file_size);
-            $sql = "INSERT INTO userFiles (user_id, file, file_name, file_size, file_type)
-            VALUES ('$id', '$file_name_new', '$file_name', '$file_size_new', '$file_type')";
+            /* $sql = "INSERT INTO userFiles (user_id, file, file_name, file_size, file_type)
+            VALUES ('$id', '$file_name_new', '$file_name', '$file_size_new', '$file_type')"; */
 
-            if (mysqli_query($conn, $sql)) {
-                echo "New record created successfully";
-            } else {
-                echo "Error:" . $sql . "<br>" . mysqli_error($conn);
-            }
+            $stmt = $conn->prepare('INSERT INTO userFiles (user_id, file, file_name, file_size, file_type)
+            VALUES (?, ?, ?, ?, ?)');
+            $stmt->bind_param('issss', $id, $file_name_new, $file_name, $file_size_new, $file_type); // 's' specifies the variable type => 'string'
 
-            echo "Success";
-            header('Location: index.php');
+            $stmt->execute();
+            session_abort();
+            // $result = $stmt->get_result();
+
+            // if (mysqli_query($conn, $sql)) {
+            //     echo "New record created successfully";
+            // } else {
+            //     echo "Error:" . $sql . "<br>" . mysqli_error($conn);
+            // }
+
+            // echo "Success";
+            // header('Location: index.php');
         } else {
-            print_r($errors);
+            // print_r($errors);
+            // var_dump($errors);
+            // $_SESSION['error'] = $errors;
+            // header('Location: index.php');
         }
 
 

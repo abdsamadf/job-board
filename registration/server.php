@@ -18,12 +18,24 @@ if (isset($_POST['reg_user'])) {
   $password_2 = mysqli_real_escape_string($db, $_POST['password_2']);
 
   // form validation: ensure that the form is correctly filled ...
-  // by adding (array_push()) corresponding error unto $errors array
+  // by adding (array_push()) corresponding error into $errors array
   if (empty($username)) { array_push($errors, "Username is required"); }
   if (empty($email)) { array_push($errors, "Email is required"); }
   if (empty($password_1)) { array_push($errors, "Password is required"); }
   if ($password_1 != $password_2) {
 	array_push($errors, "The two passwords do not match");
+  }
+
+  // form validation: ensure that the username and email is validate ...
+  // by adding (array_push()) corresponding error into $errors array
+  if (!preg_match("/^[a-zA-Z ]*$/", $username)) {
+    array_push($errors, "Only letters and white space allowed");
+    // $nameErr = "Only letters and white space allowed";
+  }
+
+  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    array_push($errors, "Invalid email format");
+    // $emailErr = "Invalid email format";
   }
 
   // first check the database to make sure
