@@ -3,7 +3,11 @@
 ?>
 
 <?php
-// $errors = array();
+
+/*
+    Format file size
+    @return file size in bytes
+*/
 function formatSizeUnits($bytes)
 {
     if ($bytes >= 1048576) {
@@ -49,33 +53,13 @@ if (isset($_POST['submit-form'])) {
             session_start();
             $id = $_SESSION['id'];
             $file_size_new = formatSizeUnits($file_size);
-            /* $sql = "INSERT INTO userFiles (user_id, file, file_name, file_size, file_type)
-            VALUES ('$id', '$file_name_new', '$file_name', '$file_size_new', '$file_type')"; */
 
             $stmt = $conn->prepare('INSERT INTO userFiles (user_id, file, file_name, file_size, file_type)
             VALUES (?, ?, ?, ?, ?)');
             $stmt->bind_param('issss', $id, $file_name_new, $file_name, $file_size_new, $file_type); // 's' specifies the variable type => 'string'
-
             $stmt->execute();
             session_abort();
-            // $result = $stmt->get_result();
-
-            // if (mysqli_query($conn, $sql)) {
-            //     echo "New record created successfully";
-            // } else {
-            //     echo "Error:" . $sql . "<br>" . mysqli_error($conn);
-            // }
-
-            // echo "Success";
-            // header('Location: index.php');
-        } else {
-            // print_r($errors);
-            // var_dump($errors);
-            // $_SESSION['error'] = $errors;
-            // header('Location: index.php');
         }
-
-
     }
 }
 ?>

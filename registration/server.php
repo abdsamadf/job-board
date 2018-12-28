@@ -30,12 +30,10 @@ if (isset($_POST['reg_user'])) {
   // by adding (array_push()) corresponding error into $errors array
   if (!preg_match("/^[a-zA-Z ]*$/", $username)) {
     array_push($errors, "Only letters and white space allowed");
-    // $nameErr = "Only letters and white space allowed";
   }
 
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     array_push($errors, "Invalid email format");
-    // $emailErr = "Invalid email format";
   }
 
   // first check the database to make sure
@@ -61,15 +59,20 @@ if (isset($_POST['reg_user'])) {
   	$query = "INSERT INTO users (username, email, password)
   			  VALUES('$username', '$email', '$password')";
   	mysqli_query($db, $query);
-  	$_SESSION['username'] = $username;
-  	$_SESSION['success'] = "You are now logged in";
+    $_SESSION['username'] = $username;
+    $_SESSION['success'] = "You are now logged in";
+    $query1 = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+
+    $results = mysqli_query($db, $query1);
+    if (mysqli_num_rows($results) == 1) {
+      $row = mysqli_fetch_assoc($results);
+      $id = $row['id'];
+      $_SESSION['id'] = $id;
+    }
   	header('location: ../index.php');
   }
 }
 
-// ...
-
-// ...
 
 // LOGIN USER
 if (isset($_POST['login_user'])) {
@@ -96,7 +99,7 @@ if (isset($_POST['login_user'])) {
       $_SESSION['id'] = $id;
   	  $_SESSION['success'] = "You are now logged in";
   	  header('location: ../index.php');
-  	}else {
+  	} else {
   		array_push($errors, "Wrong username/password combination");
   	}
   }

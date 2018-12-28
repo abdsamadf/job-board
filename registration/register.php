@@ -19,7 +19,7 @@
 						<label class="label is-medium">Username</label>
 						<div class="control">
 							<input autocomplete="off" autofocus class="input is-medium" type="text" name="username" required value="<?php echo $username; ?>">
-					</div>
+						</div>
 					</div>
 					<div class="field">
 						<label class="label is-medium">Email</label>
