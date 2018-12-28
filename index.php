@@ -95,7 +95,7 @@
 
             // Select userFiles table data
             $id = $_SESSION['id'];
-            $sql = "SELECT * FROM userFiles WHERE user_id=?";
+            $sql = "SELECT F.user_id, F.file, F.file_name, F.file_size, F.file_type, U.username FROM userFiles F INNER JOIN users U ON F.user_id = U.id WHERE user_id = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "i", $id);
             mysqli_stmt_execute($stmt);
@@ -107,10 +107,11 @@
                 <tr>
                     <th scope="col">#</th>
                     <th>User Id</th>
-                    <th>File</th>
-                    <th>File Name</th>
-                    <th>File Size</th>
-                    <th>File Type</th>
+                    <th>Username</th>
+                    <th>Resume</th>
+                    <th>Resume Name</th>
+                    <th>Resume Size</th>
+                    <th>Resume Type</th>
                 </tr>
             </thead>
             <tbody>
@@ -123,6 +124,7 @@
                         echo "<tr>";
                         echo "<td scope='col'>" . $i . "</td>";
                         echo "<td>" . $row["user_id"] . "</td>";
+                        echo "<td>" . $row["username"] . "</td>";
                         echo "<td>" . $row["file"] . "</td>";
                         echo "<td>" . $row["file_name"] . "</td>";
                         echo "<td>" . $row["file_size"] . "</td>";
